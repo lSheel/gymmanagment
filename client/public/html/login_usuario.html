@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acceso Usuario Registrado</title>
+    <link rel="stylesheet" href="../CSS/style.css" />
+    <link rel="stylesheet" href="../CSS/login.css" />
+    <script src="../js/loginUsuario.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Acceso Usuario Registrado</h1>
+    </header>
+
+    <div class="container">
+      <h2>Acceso Manual</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="nombre_completo">Nombre de Usuario:</label>
+          <input
+            type="text"
+            id="nombre_completo"
+            name="nombre_completo"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Ingresar</button>
+      </form>
+
+      <a href="index.html" class="btn-link">Volver al Menú Principal</a>
+    </div>
+
+    <!-- Modal de Bienvenida -->
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <h2 id="welcomeTitle">¡Bienvenido!</h2>
+        <p id="welcomeMessage"></p>
+        <button class="modal-btn" id="closeModal">Aceptar</button>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Pagos</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="../js/authMiddleware.js" defer></script>
+    <script src="../js/pagoAPI.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Gestión de Pagos</h1>
+      <nav>
+        <a href="gestionReportes.html">Gestion de reportes</a>
+        <a href="RNUsuarios.html">Registro de Usuario Nuevo</a>
+        <a href="login_usuario.html">Acceso Usuario Registrado</a>
+        <a href="login_admin.html">Acceso Administrador</a>
+        <a href="membresias.html">Gestión de Membresías</a>
+        <a href="pagos.html">Gestión de Pagos</a>
+        <a href="reportes.html">Generar reporte</a>
+        <button id="logoutBtn">Cerrar Sesión</button>
+      </nav>
+    </header>
+
+    <div class="container">
+      <!-- Registro de Pago -->
+      <div class="section">
+        <h2>Registrar Nuevo Pago</h2>
+        <section>
+          <form id="registroPagoForm">
+            <label for="id_cliente">ID del Cliente:</label>
+            <input
+              type="text"
+              id="id_cliente"
+              name="id_cliente"
+              required
+              placeholder="Escribe el ID del cliente"
+            />
+
+            <label for="monto">Monto del Pago:</label>
+            <input
+              type="number"
+              id="monto"
+              name="monto"
+              step="0.01"
+              min="0"
+              required
+              placeholder="Ejemplo: 500.00"
+            />
+
+            <label for="fecha_pago">Fecha de Pago:</label>
+            <input type="date" id="fecha_pago" name="fecha_pago" required />
+
+            <label for="metodo_pago">Método de Pago:</label>
+            <select id="metodo_pago" name="metodo_pago" required>
+              <option value="">Seleccione...</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="tarjeta_credito">Tarjeta de Crédito</option>
+              <option value="tarjeta_debito">Tarjeta de Débito</option>
+            </select>
+
+            <button type="submit">Registrar Pago</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- Consulta de Pagos -->
+      <div class="section">
+        <h2>Consultar Pagos por Cliente</h2>
+        <form id="consultaPagosForm">
+          <label for="busqueda_cliente">Nombre o ID del Cliente:</label>
+          <input
+            type="text"
+            id="busqueda_cliente"
+            name="busqueda_cliente"
+            required
+            placeholder="Ejemplo: 1 o Juan Pérez"
+          />
+
+          <button type="submit">Buscar Pagos</button>
+        </form>
+      </div>
+
+      <!-- Anulación de Pago -->
+      <div class="section">
+        <h2>Anular Pago</h2>
+        <form id="anulacionPagoForm">
+          <label for="id_pago">ID del Pago a Anular:</label>
+          <input
+            type="text"
+            id="id_pago"
+            name="id_pago"
+            required
+            placeholder="Ejemplo: 10"
+          />
+
+          <button type="submit">Anular Pago</button>
+        </form>
+      </div>
+
+      <!-- Reporte General -->
+      <div class="section" style="text-align: center">
+        <h2>Generar Reporte de Pagos</h2>
+        <button id="generarReporteBtn">Ver Reporte General</button>
+      </div>
+
+      <a href="menu.html">Volver al Menú Principal</a>
+      <script>
+        // Logout functionality
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          localStorage.removeItem("jwtToken");
+          localStorage.removeItem("userData");
+          window.location.href = "index.html";
+        });
+      </script>
+    </div>
+  </body>
+</html>

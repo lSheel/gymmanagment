@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Membresías</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="../js/authMiddleware.js" defer></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="../js/membresiasAPI.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Gestión de Membresías</h1>
+      <nav>
+        <a href="gestionReportes.html">Gestion de reportes</a>
+        <a href="RNUsuarios.html">Registro de Usuario Nuevo</a>
+        <a href="login_usuario.html">Acceso Usuario Registrado</a>
+        <a href="clientes.html">Gestión de Clientes</a>
+        <a href="membresias.html">Gestión de Membresías</a>
+        <a href="pagos.html">Gestión de Pagos</a>
+        <a href="reportes.html">Reportes</a>
+        <button id="logoutBtn">Cerrar Sesión</button>
+      </nav>
+    </header>
+
+    <div class="container">
+      <!-- Asignar membresía a cliente -->
+      <section class="section">
+        <h2>Asignar Membresía a Cliente</h2>
+        <form id="formAsignarMembresia">
+          <label for="id_cliente">ID del Cliente:</label>
+          <input
+            type="text"
+            id="id_cliente"
+            name="id_cliente"
+            placeholder="Escribe el ID del cliente"
+            required
+          />
+
+          <label for="tipo_membresia">Tipo de Membresía:</label>
+          <select id="tipo_membresia" name="tipo_membresia" required>
+            <option value="">Seleccione...</option>
+            <option value="bimestral">Bimestral</option>
+            <option value="trimestral">Trimestral</option>
+            <option value="anual">Anual</option>
+          </select>
+
+          <button type="submit">Cargar Datos</button>
+        </form>
+      </section>
+
+      <!-- Cancelar membresía -->
+      <section class="section">
+        <h2>Cancelar Membresía</h2>
+        <form id="formCancelarMembresia">
+          <label for="id_membresia">ID de la Membresía:</label>
+          <input
+            type="text"
+            id="id_membresia"
+            name="id_membresia"
+            placeholder="Escribe el ID de la membresía"
+            required
+          />
+
+          <button type="submit">Cancelar Membresía</button>
+        </form>
+      </section>
+
+      <a href="menu.html">Volver al Menú Principal</a>
+    </div>
+    <script>
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("jwtToken");
+        localStorage.removeItem("userData");
+        window.location.href = "index.html";
+      });
+    </script>
+  </body>
+</html>

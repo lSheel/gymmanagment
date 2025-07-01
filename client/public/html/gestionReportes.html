@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes - Sistema de Gimnasio</title>
+    <link rel="stylesheet" href="../css/reportes.css" />
+    <script src="../js/authMiddleware.js" defer></script>
+    <script src="../js/reportesAPI.js"></script>
+  </head>
+  <body>
+    <div class="menu">
+      <a href="menu.html">Menu Principal</a>
+      <a href="#" style="background-color: #4caf50">Reportes</a>
+    </div>
+    <div class="container">
+      <h1>Sistema de Administración de Membresías y Pagos</h1>
+      <h2>Generación de Reportes</h2>
+      <!-- Reporte de Pagos -->
+      <div class="report-section">
+        <h3>Reporte de Pagos</h3>
+        <form id="payment-report-form">
+          <div class="form-group">
+            <label for="payment-date-range">Rango de Fechas:</label>
+            <div>
+              <label for="payment-start-date">Desde:</label>
+              <input
+                type="date"
+                id="payment-start-date"
+                name="payment-start-date"
+              />
+              <label for="payment-end-date">Hasta:</label>
+              <input
+                type="date"
+                id="payment-end-date"
+                name="payment-end-date"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="payment-method">Método de Pago:</label>
+            <select id="payment-method" name="payment-method">
+              <option value="all">Todos</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="tarjeta_credito">Tarjeta de Crédito</option>
+              <option value="tarjeta_debito">Tarjeta de Débito</option>
+            </select>
+          </div>
+          <button type="submit">Generar Reporte</button>
+        </form>
+
+        <div id="payment-report-results">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Pago</th>
+                <th>ID Cliente</th>
+                <th>Nombre</th>
+                <th>Fecha</th>
+                <th>Monto</th>
+                <th>Método</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="report-section">
+        <h3>Reporte de Comentarios/Sugerencias</h3>
+        <form id="comments-report-form">
+          <div class="form-group">
+            <label for="comments-date-range">Rango de Fechas:</label>
+            <div>
+              <label for="comments-start-date">Desde:</label>
+              <input
+                type="date"
+                id="comments-start-date"
+                name="comments-start-date"
+              />
+              <label for="comments-end-date">Hasta:</label>
+              <input
+                type="date"
+                id="comments-end-date"
+                name="comments-end-date"
+              />
+            </div>
+          </div>
+          <button type="submit">Generar Reporte</button>
+        </form>
+        <div id="comments-report-results">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Reporte</th>
+                <th>Nombre</th>
+                <th>Comentario/Sugerencia</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Datos dinámicos vendrán de la base de datos -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Reporte de Membresías -->
+      <div class="report-section">
+        <h3>Reporte de Membresías</h3>
+        <form id="membership-report-form">
+          <div class="form-group">
+            <label for="membership-status">Estado de Membresía:</label>
+            <select id="membership-status" name="membership-status">
+              <option value="all">Todas</option>
+              <option value="activa">Activas</option>
+              <option value="vencida">Vencidas</option>
+              <option value="cancelada">Canceladas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="membership-type">Tipo de Membresía:</label>
+            <select id="membership-type" name="membership-type">
+              <option value="all">Todos</option>
+              <option value="mensual">Mensual</option>
+              <option value="trimestral">Trimestral</option>
+              <option value="anual">Anual</option>
+            </select>
+          </div>
+
+          <button type="submit">Generar Reporte</button>
+        </form>
+
+        <div id="membership-report-results">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Membresía</th>
+                <th>Nombre</th>
+                <th>Tipo Membresía</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Vencimiento</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Datos dinámicos vendrán de la base de datos -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
