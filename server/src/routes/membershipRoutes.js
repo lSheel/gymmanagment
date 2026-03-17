@@ -1,9 +1,19 @@
 import { Router } from 'express';
-import  connection  from "../config/conexion.js";
+import connection from "../config/conexion.js";
 const router = Router();
 
-router.post('/asignar', (req, res) => {
+router.post('/asignar', async (req, res) => {
   const { id_cliente, tipo_membresia } = req.body;
+
+  if (!id_cliente || !tipo_membresia) {
+    return res.status(400).json({ success: false, message: 'id_cliente y tipo_membresia son requeridos' });
+  }
+
+  const clientId = parseInt(id_cliente, 10);
+  if (isNaN(clientId) || clientId <= 0) {
+    return res.status(400).json({ success: false, message: 'id_cliente debe ser un número entero positivo' });
+  }
+
   const fecha_inicio = new Date().toISOString().split('T')[0];
   
   let fecha_fin;
@@ -27,16 +37,9 @@ router.post('/asignar', (req, res) => {
   fecha_fin = fecha_fin.toISOString().split('T')[0];
 
   const sql = 'INSERT INTO Membresias (id_cliente, tipo, fecha_inicio, fecha_fin) VALUES (?, ?, ?, ?)';
-  
-  connection.query(sql, [parseInt(id_cliente), tipo_membresia, fecha_inicio, fecha_fin], (error, results) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Error al asignar la membresía',
-        details: error.message 
-      });
-    }
+
+  try {
+    const [results] = await connection.promise().execute(sql, [clientId, tipo_membresia, fecha_inicio, fecha_fin]);
 
     res.json({ 
       success: true, 
@@ -50,23 +53,27 @@ router.post('/asignar', (req, res) => {
         estado: 'activa'
       }
     });
-  });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Error al asignar la membresía',
+      details: error.message 
+    });
+  }
 });
 
-router.post('/cancelar', (req, res) => {
+router.post('/cancelar', async (req, res) => {
   const { id_membresia } = req.body;
-  
+
+  if (!id_membresia) {
+    return res.status(400).json({ success: false, message: 'id_membresia es requerido' });
+  }
+
   const sql = 'UPDATE Membresias SET estado = "cancelada" WHERE id_membresia = ?';
-  
-  connection.query(sql, [id_membresia], (error, results) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Error al cancelar la membresía',
-        details: error.message 
-      });
-    }
+
+  try {
+    const [results] = await connection.promise().execute(sql, [id_membresia]);
 
     if (results.affectedRows === 0) {
       return res.status(404).json({ 
@@ -79,7 +86,14 @@ router.post('/cancelar', (req, res) => {
       success: true, 
       message: 'Membresía cancelada correctamente' 
     });
-  });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Error al cancelar la membresía',
+      details: error.message 
+    });
+  }
 });
 
 export default router;

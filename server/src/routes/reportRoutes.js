@@ -1,12 +1,10 @@
-import express, { json } from "express";
+import express from "express";
 import connection from "../config/conexion.js";
 
 const router = express.Router();
 
-router.get("/reporte-membresias", (req, res) => {
-  // Obtener parámetros de consulta
+router.get("/reporte-membresias", async (req, res) => {
   const { estado, tipo, fecha_inicio, fecha_fin } = req.query;
-  console.log(estado, tipo, fecha_fin, fecha_inicio);
 
   let sql = `
         SELECT 
@@ -21,21 +19,26 @@ router.get("/reporte-membresias", (req, res) => {
     `;
 
   const conditions = [];
+  const params = [];
 
   if (estado && estado !== "all") {
-    conditions.push(`m.estado = '${escapeSqlParam(estado)}'`);
+    conditions.push(`m.estado = ?`);
+    params.push(estado);
   }
 
   if (tipo && tipo !== "all") {
-    conditions.push(`m.tipo = '${escapeSqlParam(tipo)}'`);
+    conditions.push(`m.tipo = ?`);
+    params.push(tipo);
   }
 
   if (fecha_inicio) {
-    conditions.push(`m.fecha_inicio >= '${escapeSqlParam(fecha_inicio)}'`);
+    conditions.push(`m.fecha_inicio >= ?`);
+    params.push(fecha_inicio);
   }
 
   if (fecha_fin) {
-    conditions.push(`m.fecha_fin <= '${escapeSqlParam(fecha_fin)}'`);
+    conditions.push(`m.fecha_fin <= ?`);
+    params.push(fecha_fin);
   }
 
   if (conditions.length > 0) {
@@ -44,26 +47,25 @@ router.get("/reporte-membresias", (req, res) => {
 
   sql += ` ORDER BY m.fecha_inicio DESC`;
 
-  console.log(sql);
-  connection.query(sql, (error, results) => {
-    if (error) {
-      console.error("Error en la consulta:", error);
-      return res.status(500).json({
-        error: true,
-        message: "Error al obtener las membresías",
-        details: error.message,
-      });
-    }
+  try {
+    const [results] = await connection.promise().execute(sql, params);
 
     res.json({
       success: true,
       count: results.length,
       membresias: results,
     });
-  });
+  } catch (error) {
+    console.error("Error en la consulta:", error);
+    return res.status(500).json({
+      error: true,
+      message: "Error al obtener las membresías",
+      details: error.message,
+    });
+  }
 });
 
-router.get("/reporte-pagos", (req, res) => {
+router.get("/reporte-pagos", async (req, res) => {
   const { metodo, fecha_inicio, fecha_fin } = req.query;
 
   let sql = `
@@ -79,17 +81,21 @@ router.get("/reporte-pagos", (req, res) => {
     `;
 
   const conditions = [];
+  const params = [];
 
   if (metodo && metodo !== "all") {
-    conditions.push(`p.metodo_pago = '${escapeSqlParam(metodo)}'`);
+    conditions.push(`p.metodo_pago = ?`);
+    params.push(metodo);
   }
 
   if (fecha_inicio) {
-    conditions.push(`p.fecha_pago >= '${escapeSqlParam(fecha_inicio)}'`);
+    conditions.push(`p.fecha_pago >= ?`);
+    params.push(fecha_inicio);
   }
 
   if (fecha_fin) {
-    conditions.push(`p.fecha_pago <= '${escapeSqlParam(fecha_fin)}'`);
+    conditions.push(`p.fecha_pago <= ?`);
+    params.push(fecha_fin);
   }
 
   if (conditions.length > 0) {
@@ -98,27 +104,25 @@ router.get("/reporte-pagos", (req, res) => {
 
   sql += ` ORDER BY p.fecha_pago DESC`;
 
-
-  connection.query(sql, (error, results) => {
-    if (error) {
-      console.error("Error en la consulta:", error);
-      return res.status(500).json({
-        error: true,
-        message: "Error al obtener los pagos",
-        details: error.message,
-      });
-    }
+  try {
+    const [results] = await connection.promise().execute(sql, params);
 
     res.json({
       success: true,
       count: results.length,
       pagos: results,
     });
-  });
+  } catch (error) {
+    console.error("Error en la consulta:", error);
+    return res.status(500).json({
+      error: true,
+      message: "Error al obtener los pagos",
+      details: error.message,
+    });
+  }
 });
 
-
-router.get("/reporte-comentarios", (req, res) => {
+router.get("/reporte-comentarios", async (req, res) => {
   const { fecha_inicio, fecha_fin } = req.query;
 
   let sql = `
@@ -131,13 +135,16 @@ router.get("/reporte-comentarios", (req, res) => {
     `;
 
   const conditions = [];
+  const params = [];
 
   if (fecha_inicio) {
-    conditions.push(`fecha >= '${escapeSqlParam(fecha_inicio)}'`);
+    conditions.push(`fecha >= ?`);
+    params.push(fecha_inicio);
   }
 
   if (fecha_fin) {
-    conditions.push(`fecha <= '${escapeSqlParam(fecha_fin)}'`);
+    conditions.push(`fecha <= ?`);
+    params.push(fecha_fin);
   }
 
   if (conditions.length > 0) {
@@ -146,26 +153,22 @@ router.get("/reporte-comentarios", (req, res) => {
 
   sql += ` ORDER BY fecha DESC`;
 
-  connection.query(sql, (error, results) => {
-    if (error) {
-      console.error("Error en la consulta:", error);
-      return res.status(500).json({
-        error: true,
-        message: "Error al obtener los reportes",
-        details: error.message,
-      });
-    }
+  try {
+    const [results] = await connection.promise().execute(sql, params);
 
     res.json({
       success: true,
       count: results.length,
       reportes: results,
     });
-  });
+  } catch (error) {
+    console.error("Error en la consulta:", error);
+    return res.status(500).json({
+      error: true,
+      message: "Error al obtener los reportes",
+      details: error.message,
+    });
+  }
 });
-
-function escapeSqlParam(param) {
-  return param.replace(/['"\\]/g, "");
-}
 
 export default router;

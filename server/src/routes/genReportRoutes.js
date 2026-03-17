@@ -1,10 +1,10 @@
 import express from 'express';
-import connection from '../config/conexion.js'
+import connection from '../config/conexion.js';
 
 const router = express.Router();
 
 // Endpoint para crear un nuevo reporte
-router.post('/reportes', (req, res) => {
+router.post('/reportes', async (req, res) => {
     const { nombre, reporte } = req.body;
 
     // Validación básica
@@ -24,22 +24,22 @@ router.post('/reportes', (req, res) => {
     }
 
     const sql = "INSERT INTO Reportes (nombre, reporte) VALUES (?, ?)";
-    
-    connection.query(sql, [nombre, reporte], (error, results) => {
-        if (error) {
-            console.error("Error al insertar reporte:", error);
-            return res.status(500).json({
-                error: true,
-                message: 'Ocurrió un error al enviar el reporte',
-                details: error.message
-            });
-        }
+
+    try {
+        await connection.promise().execute(sql, [nombre, reporte]);
 
         return res.status(201).json({
             error: false,
             message: 'Reporte enviado correctamente. ¡Gracias por tu opinión!'
         });
-    });
+    } catch (error) {
+        console.error("Error al insertar reporte:", error);
+        return res.status(500).json({
+            error: true,
+            message: 'Ocurrió un error al enviar el reporte',
+            details: error.message
+        });
+    }
 });
 
 export default router;
