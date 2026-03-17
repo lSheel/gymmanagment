@@ -3,7 +3,10 @@ import jwt from 'jsonwebtoken';
 import connection from '../config/conexion.js';
 
 const router = express.Router();
-const SECRET_KEY = 'gymmanagment'; // Cambia esto por una clave segura en producción
+const SECRET_KEY = process.env.JWT_SECRET || 'gymmanagment';
+if (!process.env.JWT_SECRET) {
+    console.warn('WARNING: JWT_SECRET env variable is not set. Using insecure default. Set JWT_SECRET in production.');
+}
 
 // Login de usuario
 router.post('/login', async (req, res) => {
@@ -15,7 +18,6 @@ router.post('/login', async (req, res) => {
             'SELECT * FROM usuarios WHERE correo = ?', 
             [email]
         );
-
 
         if (users.length === 0) {
             return res.status(401).json({
@@ -34,13 +36,12 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        console.log("genera token");
         // Crear token JWT
         const token = jwt.sign(
             { 
                 id: user.id, 
                 email: user.correo,
-                rol: user.rol // Asume que tienes un campo 'rol' en tu tabla
+                rol: user.rol
             }, 
             SECRET_KEY, 
             { expiresIn: '1h' }
@@ -71,7 +72,7 @@ router.post('/login', async (req, res) => {
 export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    console.log(authHeader);
+
     if (!token) {
         return res.status(401).json({
             error: true,
@@ -91,11 +92,11 @@ export const authenticateToken = (req, res, next) => {
     });
 };
 
-router.get('/verify', (req, res) => {
+router.get('/verify', authenticateToken, (req, res) => {
     res.json({
         error: false,
         message: 'Token válido',
-        user: req.user // Devuelve la información del usuario del token
+        user: req.user
     });
 });
 export default router;

@@ -25,8 +25,6 @@ router.post('/verificar-acceso', async (req, res) => {
             [`%${nombre_completo}%`]
         );
 
-        console.log('Resultados de la consulta:', clientes); // Log para depuración
-
         if (clientes.length === 0) {
             return res.json({
                 error: true,
@@ -46,7 +44,7 @@ router.post('/verificar-acceso', async (req, res) => {
 
         // 3. Verificar fecha de vencimiento
         const hoy = new Date();
-        const fechaVencimiento = new Date(cliente.fecha_vencimiento);
+        const fechaVencimiento = new Date(cliente.fecha_fin);
 
         if (fechaVencimiento < hoy) {
             return res.json({

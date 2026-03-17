@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import rateLimit from "express-rate-limit";
 import clientRoutes from "./routes/clientRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
 import membershipRoutes from "./routes/membershipRoutes.js";
@@ -21,12 +22,31 @@ server.use(morgan("dev"));
 server.use(express.json());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
-server.use("/api/auth", authRouter);
-server.use("/api/clientes", authenticateToken, clientRoutes);
-server.use("/api/reportes", authenticateToken, reportRoutes);
-server.use("/api/membresias", authenticateToken, membershipRoutes);
-server.use("/api/reporte", authenticateToken, genReportRoutes);
-server.use("/api/pagos", authenticateToken, paymantRoutes);
-server.use("/api/registrarCliente", authenticateToken, registerClientRoutes);
-server.use('/api/acceso-gym', accesoGymRouter);
+
+// Rate limiting: strict limit for auth endpoints to prevent brute force attacks
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: true, message: 'Demasiados intentos. Intente de nuevo más tarde.' }
+});
+
+// Rate limiting: general limit for all other API routes
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: true, message: 'Demasiadas solicitudes. Intente de nuevo más tarde.' }
+});
+
+server.use("/api/auth", authLimiter, authRouter);
+server.use("/api/clientes", apiLimiter, authenticateToken, clientRoutes);
+server.use("/api/reportes", apiLimiter, authenticateToken, reportRoutes);
+server.use("/api/membresias", apiLimiter, authenticateToken, membershipRoutes);
+server.use("/api/reporte", apiLimiter, authenticateToken, genReportRoutes);
+server.use("/api/pagos", apiLimiter, authenticateToken, paymantRoutes);
+server.use("/api/registrarCliente", apiLimiter, authenticateToken, registerClientRoutes);
+server.use('/api/acceso-gym', apiLimiter, accesoGymRouter);
 export default server;
